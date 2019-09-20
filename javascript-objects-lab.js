@@ -151,3 +151,39 @@ const playGame = (player1, player2) => {
 };
 
 playGame(Adventurer, Ogre);
+
+
+
+// Cat Combinator
+// 1. Mama Cat
+const cat1 = {
+    name: 'Sylvester',
+    breed: 'tuxedo',
+    age: 11
+};
+
+console.log(cat1.age);
+console.log(cat1.breed);
+
+const cat2 = {
+    name: 'Felix',
+    breed: 'birman',
+    age: 33
+};
+
+const combineCats = (mama, papa) => {
+    let finalObj = {};
+
+    const mamaName = mama.name.slice(0, mama.name.length / 2);
+    const papaName = papa.name.slice(papa.name.length / 2);
+    
+    finalObj.name = mamaName + papaName;
+    finalObj.age = 1;
+    finalObj.breed = mama.breed === papa.breed 
+        ? mama.breed
+        : `${mama.breed}-${papa.breed}`;
+
+    console.log(finalObj);
+};
+
+
