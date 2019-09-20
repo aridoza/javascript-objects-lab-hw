@@ -67,11 +67,25 @@ monster.introduce();
 // adventurer attacks with same value each time
 // if either character's hit points are <= 0, the other character wins
 
-function Character(name, hitpoints, attackValue) {
-    this.name = name;
-    this.hitpoints = hitpoints;
-    this.attackValue = attackValue || 20;
+// generate a random number between 0 and 20
+const generateRandomDamage = () => {
+    return Math.floor(Math.random() * 20);
+}
 
+// factory function to create a character
+function Character(name, hitpoints) {
+    // character name
+    this.name = name;
+    // character hitpoints
+    this.hitpoints = hitpoints;
+    // calculate damage the character does
+    this.attackValue =  function(damage) {
+        // if damage is predefined, set it as such
+        // otherwise set it to a random number
+        return damage ? damage : generateRandomDamage();
+    };
+    // attacks the opposing player, updates their hitpoints
+    // and logs the result to the console
     this.attack = function(enemy, damage) {
         // update the opponent's health
         enemy.hitpoints -= damage;
@@ -81,12 +95,8 @@ function Character(name, hitpoints, attackValue) {
     };
 };
 
-const generateRandomDamage = () => {
-    return Math.floor(Math.random() * 15);
-}
-
 // Ogre object
-const Ogre = new Character('Ogrus the Ogreful', 100, generateRandomDamage());
+const Ogre = new Character('Ogrus the Ogreful', 100);
 
 
 // Adventurer object
@@ -105,40 +115,38 @@ const playGame = (player1, player2) => {
     let gameOver = false;
 
     const endGame = (winningPlayer) => {
-        console.log(`Game Over! ${winningPlayer.name} wins!`);
         gameOver = true;
+        console.log(`Game Over! ${winningPlayer.name} wins!`);
+        return;
     }
 
     // keep track of the number of turns
     let currentTurn = 1;
 
     
-    
+    // keep the game going as long as both characters 
+    // have more than 0 health
     while (gameOver === false) {
         // show the current turn
         console.log(`Turn ${currentTurn}: `)
 
-        // first player attacks the second player if they still have health
-        player1.hitpoints > 0 
-            ? player1.attack(player2, player1.attackValue)
-            : endGame(player2);
-
-        // second player attacks the first player if they still have health
-        player2.hitpoints > 0
-            ? player2.attack(player1, player2.attackValue)
-            : endGame(player1);
+        // first player attacks
+        player1.attack(player2, player1.attackValue(20));
         
+        // check if second player was knocked out
+        if (player2.hitpoints <= 0) {
+            return endGame(player1);
+        } 
+        // second player attacks
+        player2.attack(player1, player2.attackValue());
+        
+        // check if first player was knocked out
+        if (player1.hitpoints <= 0) {
+            return endGame(player2);
+        } 
 
-
-        // if (player1.hitpoints <= 0) {
-        //     console.log(`It's over! Down goes ${player1.name}! ${player2.name} wins!`);
-        //     gameOver = true;
-        // } else if (player2.hitpoints <= 0) {
-        //     console.log(`It's over! Down goes ${player2.name}! ${player1.name} wins!`);
-        //     gameOver = true;
-        // } else {
-        //     currentTurn++;
-        // }
+        // advance to the next turn
+        currentTurn++;
     };
 };
 
